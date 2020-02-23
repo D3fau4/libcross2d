@@ -95,9 +95,9 @@ std::vector<Io::File> POSIXIo::getDirList(const std::string &path, bool sort, bo
                 file.path = Utility::removeLastSlash(path) + "/" + file.name;
 #ifdef __SWITCH__
                 auto *dirSt = (fsdev_dir_t *) dir->dirData->dirStruct;
-                FsDirectoryEntry *entry = &dirSt->entry_data[dirSt->index];
-                file.type = entry->type == ENTRYTYPE_DIR ? Type::Directory : Type::File;
-                file.size = entry->fileSize;
+                FsDirectoryEntry *entry = fsdevDirGetEntries(dirSt);
+                file.type = entry->type == FsDirEntryType::FsDirEntryType_Dir ? Type::Directory : Type::File;
+                file.size = entry->file_size;
 #else
                 struct stat st{};
                 if (stat(file.path.c_str(), &st) == 0) {
